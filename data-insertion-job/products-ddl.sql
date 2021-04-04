@@ -1,14 +1,14 @@
 create table products
 (
-	id int auto_increment
-		primary key,
-	color varchar(32) null,
-	department varchar(255) null,
-	productName varchar(255) null,
-	price double null,
-	productAdjective varchar(255) null,
-	productMaterial varchar(255) null,
-	product varchar(255) null,
-	productDescription varchar(255) null,
+	id int auto_increment,
+	color varchar(32) ,
+	department varchar(255) ,
+	productName varchar(255) ,
+	price double ,
+	productAdjective varchar(255) ,
+	productMaterial varchar(255) ,
+	product varchar(255) ,
+	productDescription varchar(255),
+	primary key(id)
 );
 
