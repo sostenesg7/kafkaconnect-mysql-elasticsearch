@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-app.use(express.json());
+// app.use(express.json());
 const mongoose = require('mongoose');
 const { MONGO_URI, MONGO_USER, MONGO_PASS } = process.env;
 
