@@ -1,20 +1,19 @@
-version: "3"
+version: '3'
 
 services:
-  
   mysql:
     image: wesleywillians/mysql-kafka-connect:latest
     command: --innodb-use-native-aio=0
     tty: true
     restart: always
     ports:
-      - "3306:3306"
+      - '3306:3306'
     environment:
       - MYSQL_DATABASE=products
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=root
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - 'host.docker.internal:172.17.0.1'
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -27,8 +26,8 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
-      - "9094:9094"
+      - '9092:9092'
+      - '9094:9094'
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -38,7 +37,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - 'host.docker.internal:172.17.0.1'
     restart: always
 
   control-center:
@@ -47,16 +46,16 @@ services:
     depends_on:
       - kafka
     ports:
-      - "9021:9021"
+      - '9021:9021'
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_CONNECT_CLUSTER: http://kafka-connect:8083
       PORT: 9021
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - 'host.docker.internal:172.17.0.1'
     restart: always
-  
+
   kafka-connect:
     image: confluentinc/cp-kafka-connect-base:6.0.0
     container_name: kafka-connect
@@ -66,7 +65,7 @@ services:
     ports:
       - 8083:8083
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONNECT_BOOTSTRAP_SERVERS: 'kafka:9092'
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: kafka-connect
       CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
@@ -74,15 +73,15 @@ services:
       CONNECT_STATUS_STORAGE_TOPIC: _connect-status
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
-      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR"
-      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_INTERNAL_KEY_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
+      CONNECT_INTERNAL_VALUE_CONVERTER: 'org.apache.kafka.connect.json.JsonConverter'
+      CONNECT_REST_ADVERTISED_HOST_NAME: 'kafka-connect'
+      CONNECT_LOG4J_ROOT_LOGLEVEL: 'INFO'
+      CONNECT_LOG4J_LOGGERS: 'org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR'
+      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: '[%d] %p %X{connector.context}%m (%c:%L)%n'
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '1'
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '1'
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
       # # Optional settings to include to support Confluent Control Center
       #   CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       #   CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
@@ -109,7 +108,7 @@ services:
         #
         sleep infinity
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - 'host.docker.internal:172.17.0.1'
     restart: always
 
   es01:
@@ -120,7 +119,7 @@ services:
       - cluster.name=es-docker-cluster
       #- cluster.initial_master_nodes=es01
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+      - 'ES_JAVA_OPTS=-Xms2048m -Xmx2048m'
       - discovery.type=single-node
     ulimits:
       memlock:
@@ -131,7 +130,7 @@ services:
     ports:
       - 9200:9200
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - 'host.docker.internal:172.17.0.1'
     restart: always
 
   kib01:
@@ -143,9 +142,9 @@ services:
       ELASTICSEARCH_URL: http://es01:9200
       ELASTICSEARCH_HOSTS: '["http://es01:9200"]'
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - 'host.docker.internal:172.17.0.1'
     restart: always
-    
+
   mongodb:
     image: mongo
     restart: always
@@ -157,9 +156,9 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
-      - MONGO_INITDB_DATABASE=fullcycle
+      - MONGO_INITDB_DATABASE=products
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - 'host.docker.internal:172.17.0.1'
 
   mongo-express:
     image: mongo-express
@@ -172,5 +171,19 @@ services:
       - ME_CONFIG_MONGODB_AUTH_PASSWORD=root
       - ME_CONFIG_MONGODB_ADMINUSERNAME=root
       - ME_CONFIG_MONGODB_ADMINPASSWORD=root
+    depends_on:
+      - mongodb
+
+  http-server:
+    build: http-server/
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/products
+      - MONGO_USER=root
+      - MONGO_PASS=root
+    extra_hosts:
+      - 'host.docker.internal:172.17.0.1'
     depends_on:
       - mongodb
