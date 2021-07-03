@@ -37,6 +37,7 @@ app.get('/api/product/{id}', async (req, res) => {
 });
 
 app.post('/api/product', async (req, res) => {
+  console.log(req.body);
   const product = await Product.create(req.body);
   console.log('NEW PRODUCT CREATED', product);
   res.json(product);
