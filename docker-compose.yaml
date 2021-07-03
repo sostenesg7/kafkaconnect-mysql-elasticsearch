@@ -147,6 +147,8 @@ services:
   mongodb:
     image: mongo
     restart: always
+    ports:
+      - 27017:27017
     volumes:
       - ./.docker/dbdata:/data/db
       - ./.docker/mongo:/docker-entrypoint-initdb.d
