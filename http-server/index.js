@@ -3,7 +3,7 @@ const app = express();
 app.use(
   express.json({
     verify: (req, res, buff) => {
-      console.log(buff.toString());
+      console.log(buff);
     },
   })
 );
