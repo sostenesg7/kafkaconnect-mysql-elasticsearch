@@ -182,10 +182,10 @@ services:
     depends_on:
       - mongodb
 
-  http-server:
-    build: http-server/
+  products:
+    build: products/
     restart: always
-    hostname: http-server
+    hostname: products
     ports:
       - 3000:3000
     environment:
