@@ -193,6 +193,8 @@ services:
       - 'host.docker.internal:172.17.0.1'
     depends_on:
       - mongodb
+    networks: 
+      - kong-net
 
   nginx:
     image: nginx
