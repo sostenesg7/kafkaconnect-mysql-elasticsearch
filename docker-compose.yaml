@@ -195,6 +195,7 @@ services:
       - mongodb
     networks: 
       - kong-net
+    hostname: http-server
 
   nginx:
     image: nginx
