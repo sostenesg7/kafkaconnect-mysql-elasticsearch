@@ -2,7 +2,7 @@ version: '3'
 
 volumes:
   kong_data: {}
-  
+
 networks:
   kong-net:
 
@@ -165,6 +165,8 @@ services:
       - MONGO_INITDB_DATABASE=products
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
+    networks:
+      - kong-net
 
   mongo-express:
     image: mongo-express
@@ -183,6 +185,7 @@ services:
   http-server:
     build: http-server/
     restart: always
+    hostname: http-server
     ports:
       - 3000:3000
     environment:
@@ -193,9 +196,8 @@ services:
       - 'host.docker.internal:172.17.0.1'
     depends_on:
       - mongodb
-    networks: 
+    networks:
       - kong-net
-    hostname: http-server
 
   nginx:
     image: nginx
@@ -221,9 +223,9 @@ services:
       POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-kong}
       POSTGRES_DB: kong
     ports:
-      - "5432:5432"
+      - '5432:5432'
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "kong"]
+      test: ['CMD', 'pg_isready', '-U', 'kong']
       interval: 30s
       timeout: 30s
       retries: 3
@@ -266,22 +268,22 @@ services:
     depends_on:
       - kong-database
     healthcheck:
-      test: ["CMD", "kong", "health"]
+      test: ['CMD', 'kong', 'health']
       interval: 10s
       timeout: 10s
       retries: 10
     ports:
-      - "8000:8000"
-      - "8001:8001"
-      - "8443:8443"
-      - "8444:8444"
+      - '8000:8000'
+      - '8001:8001'
+      - '8443:8443'
+      - '8444:8444'
 
   #######################################
   # Konga database prepare
   #######################################
   konga-prepare:
     image: pantsel/konga:latest
-    command: "-c prepare -a postgres -u postgresql://kong:${KONG_PG_PASSWORD:-kong}@kong-database:5432/konga"
+    command: '-c prepare -a postgres -u postgresql://kong:${KONG_PG_PASSWORD:-kong}@kong-database:5432/konga'
     networks:
       - kong-net
     restart: on-failure
@@ -295,7 +297,7 @@ services:
     image: pantsel/konga:latest
     restart: always
     networks:
-        - kong-net   
+      - kong-net
     environment:
       DB_ADAPTER: postgres
       DB_URI: postgresql://kong:${KONG_PG_PASSWORD:-kong}@kong-database:5432/konga
@@ -303,4 +305,4 @@ services:
     depends_on:
       - kong-database
     ports:
-      - "1337:1337"
+      - '1337:1337'
