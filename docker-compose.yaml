@@ -189,6 +189,7 @@ services:
       - mongodb
 
   nginx:
+    image: nginx
     restart: always
     ports:
       - 8080:80
