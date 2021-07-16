@@ -7,8 +7,6 @@ volumes:
 networks:
   kong-net:
   agent_network:
-    driver: overlay
-    attachable: true
 
 services:
   zookeeper:
