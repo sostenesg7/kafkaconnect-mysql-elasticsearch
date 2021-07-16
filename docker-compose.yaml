@@ -2,18 +2,21 @@ version: '3'
 
 volumes:
   kong_data: {}
+  portainer_data:
 
 networks:
   kong-net:
+  agent_network:
+    driver: overlay
+    attachable: true
 
 services:
- 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     restart: always
-    networks: 
+    networks:
       - kong-net
 
   kafka:
@@ -34,7 +37,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
     restart: always
-    networks: 
+    networks:
       - kong-net
 
   control-center:
@@ -52,7 +55,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
     restart: always
-    networks: 
+    networks:
       - kong-net
 
   kafka-connect:
@@ -109,7 +112,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
     restart: always
-    networks: 
+    networks:
       - kong-net
 
   es01:
@@ -136,7 +139,7 @@ services:
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
     restart: always
-    networks: 
+    networks:
       - kong-net
 
   #https://discuss.elastic.co/t/how-to-set-passwords-for-built-in-users-with-docker-compose-setup/198096/3
@@ -149,13 +152,13 @@ services:
       ELASTICSEARCH_URL: http://es01:9200
       ELASTICSEARCH_HOSTS: '["http://es01:9200"]'
       # Security
-      XPACK_SECURITY_ENABLED: "true"
-      ELASTICSEARCH_USERNAME: "elastic"
-      ELASTICSEARCH_PASSWORD: "elastic"
+      XPACK_SECURITY_ENABLED: 'true'
+      ELASTICSEARCH_USERNAME: 'elastic'
+      ELASTICSEARCH_PASSWORD: 'elastic'
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
     restart: always
-    networks: 
+    networks:
       - kong-net
 
   mysql:
@@ -171,9 +174,9 @@ services:
       - MYSQL_USER=root
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
-    networks: 
+    networks:
       - kong-net
-    
+
   mongodb:
     image: mongo
     restart: always
@@ -204,7 +207,7 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=root
     depends_on:
       - mongodb
-    networks: 
+    networks:
       - kong-net
 
   products:
@@ -231,7 +234,7 @@ services:
       - 8080:80
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
-    networks: 
+    networks:
       - kong-net
 
   #######################################
@@ -333,3 +336,32 @@ services:
       - kong-database
     ports:
       - '1337:1337'
+
+  # Portainer
+  agent:
+    image: portainer/agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - agent_network
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  portainer:
+    image: portainer/portainer-ce
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    ports:
+      - '9000:9000'
+      - '8000:8000'
+    volumes:
+      - portainer_data:/data
+    networks:
+      - agent_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
