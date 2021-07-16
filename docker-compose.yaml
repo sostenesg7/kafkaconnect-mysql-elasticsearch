@@ -7,22 +7,7 @@ networks:
   kong-net:
 
 services:
-  mysql:
-    image: wesleywillians/mysql-kafka-connect:latest
-    command: --innodb-use-native-aio=0
-    tty: true
-    restart: always
-    ports:
-      - '3306:3306'
-    environment:
-      - MYSQL_DATABASE=products
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=root
-    extra_hosts:
-      - 'host.docker.internal:172.17.0.1'
-    networks: 
-      - kong-net
-
+ 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
@@ -173,6 +158,22 @@ services:
     networks: 
       - kong-net
 
+  mysql:
+    image: wesleywillians/mysql-kafka-connect:latest
+    command: --innodb-use-native-aio=0
+    tty: true
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_DATABASE=products
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+    extra_hosts:
+      - 'host.docker.internal:172.17.0.1'
+    networks: 
+      - kong-net
+    
   mongodb:
     image: mongo
     restart: always
