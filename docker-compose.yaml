@@ -363,6 +363,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - agent_network
+      - kong-net
     deploy:
       mode: replicated
       replicas: 1
@@ -371,3 +372,6 @@ services:
     restart: always
     depends_on:
       - agent
+    extra_hosts:
+    - 'host.docker.internal:172.17.0.1'
+  
