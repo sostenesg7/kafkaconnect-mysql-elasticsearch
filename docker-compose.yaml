@@ -138,8 +138,8 @@ services:
       - 'ES_JAVA_OPTS=-Xms2048m -Xmx2048m'
       - discovery.type=single-node
       # Security
-      xpack.security.enabled: "true"
-      ELASTIC_PASSWORD: "elastic"
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=elastic
     ulimits:
       memlock:
         soft: -1
